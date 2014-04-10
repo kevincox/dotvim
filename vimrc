@@ -1,3 +1,5 @@
+execute pathogen#infect()
+
 set hidden
 set display=lastline " Display as much of wrapped lines as possible.
 set clipboard=unnamedplus

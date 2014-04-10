@@ -1,0 +1,30 @@
+[submodule "bundle/fugitive"]
+	path = bundle/fugitive
+	url = git://github.com/tpope/vim-fugitive.git
+[submodule "bundle/vim-abolish"]
+	path = bundle/vim-abolish
+	url = git@github.com:tpope/vim-abolish.git
+[submodule "bundle/unimpaired"]
+	path = bundle/unimpaired
+	url = git@github.com:tpope/vim-unimpaired.git
+[submodule "bundle/gundo"]
+	path = bundle/gundo
+	url = https://github.com/sjl/gundo.vim.git
+[submodule "bundle/neocomplete"]
+	path = bundle/neocomplete
+	url = https://github.com/Shougo/neocomplete.vim.git
+[submodule "bundle/repeat"]
+	path = bundle/repeat
+	url = https://github.com/tpope/vim-repeat.git
+[submodule "bundle/nerdtree"]
+	path = bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree.git
+[submodule "bundle/eunuch"]
+	path = bundle/eunuch
+	url = https://github.com/tpope/vim-eunuch.git
+[submodule "bundle/commentary"]
+	path = bundle/commentary
+	url = https://github.com/tpope/vim-commentary.git
+[submodule "bundle/indent-object"]
+	path = bundle/indent-object
+	url = https://github.com/michaeljsmith/vim-indent-object.git
