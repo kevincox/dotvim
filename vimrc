@@ -35,7 +35,7 @@ syntax on
 if has('gui_running')
 	colorscheme Mustang
 else
-	colorscheme relaxedgreen
+	colorscheme Mustang
 end
 let &colorcolumn=join(range(81,999),",")
 highlight ColorColumn guibg=#2d2d2d ctermbg=235
@@ -92,6 +92,8 @@ autocmd FileType c setlocal commentstring=//%s
 
 nnoremap ; :
 nnoremap <Leader>w :w<CR>
+nnoremap <Leader>ev :edit   $MYVIMRC<Cr>
+nnoremap <Leader>rv :source $MYVIMRC<Cr>
 
 let g:Tex_DefaultTargetFormat = 'pdf'
 
