@@ -9,58 +9,44 @@ set history=1000
 set scrolloff=2
 
 " No swap files.
-set nobackup
-set nowritebackup
-set noswapfile
+set nobackup nowritebackup noswapfile
 
 set showcmd
 set wildmode=list:longest
 set showmatch
 set autoread
-set linebreak
 set autochdir
 set nofoldenable " Disable folding.
-let g:Tex_DefaultTargetFormat = 'pdf'
 set completeopt=longest
 set whichwrap=b,s,<,>,[,]
-set nowrap
 set ffs=unix,dos,mac
 set encoding=utf-8
 set list listchars=tab:→\ ,trail:·
 set linebreak
 set spell spelllang=en_us
-set guifont=Deja\ Vu\ Sans\ Mono\ 11
-"set hlsearch  " Highlight search terms...
-set incsearch " ...dynamically as they are typed.
-set ignorecase
-set smartcase
-set infercase
+set incsearch
+set ignorecase smartcase infercase
 
 set go-=T "Disable toolbar.
 
+set guifont=Deja\ Vu\ Sans\ Mono\ 11
+set t_Co=256
 syntax on
 if has('gui_running')
 	colorscheme Mustang
 else
 	colorscheme relaxedgreen
 end
-
-set t_Co=256
-
 let &colorcolumn=join(range(81,999),",")
 highlight ColorColumn guibg=#2d2d2d ctermbg=235
 
 filetype on
 filetype plugin on
 "filetype indent on
-set autoindent
-set copyindent
-set preserveindent
+set autoindent copyindent preserveindent
 
 "set smarttab
-set tabstop=4
-set shiftwidth=4
-set softtabstop=0
+set tabstop=4 shiftwidth=4 softtabstop=0
 
 set omnifunc=syntaxcomplete#Complete
 autocmd Filetype java setlocal omnifunc=javacomplete#Complete
@@ -107,5 +93,6 @@ autocmd FileType c setlocal commentstring=//%s
 nnoremap ; :
 nnoremap <Leader>w :w<CR>
 
-let g:loaded_commentary = 1
+let g:Tex_DefaultTargetFormat = 'pdf'
+
 call tcomment#DefineType("c", "//%s\n//")
