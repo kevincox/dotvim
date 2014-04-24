@@ -1,5 +1,5 @@
 execute pathogen#infect()
-let mapleader = ","
+let mapleader = ";"
 
 set hidden
 set number
@@ -102,8 +102,8 @@ augroup filetype
 	autocmd FileType c setlocal commentstring=//%s
 augroup END
 
-nnoremap ; :
-nnoremap <Leader>w :w<CR>
+nnoremap <Leader>w  :w<CR>
+nnoremap <Leader>wq :wq<CR>
 nnoremap <Leader>ev :edit   $MYVIMRC<Cr>
 nnoremap <Leader>rv :source $MYVIMRC<Cr>
 
