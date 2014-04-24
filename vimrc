@@ -7,6 +7,7 @@ set display=lastline " Display as much of wrapped lines as possible.
 set clipboard=unnamedplus " Use system clipboard.
 set history=1000
 set scrolloff=2
+set updatetime=10000
 
 " No swap files.
 set nobackup nowritebackup noswapfile
@@ -24,8 +25,16 @@ set encoding=utf-8
 set list listchars=tab:→\ ,trail:·
 set linebreak
 set spell spelllang=en_us
-set incsearch
+
+set hlsearch incsearch
 set ignorecase smartcase infercase
+function! SearchHlClear()
+	let @/ = ''
+endfunction
+augroup searchhighlight
+	autocmd!
+	autocmd CursorHold,CursorHoldI * call SearchHlClear()
+augroup END
 
 set go-=T "Disable toolbar.
 
@@ -82,13 +91,16 @@ inoremap <CR> <CR>d<BS>
 nnoremap o od<BS>
 nnoremap O Od<BS>
 
-autocmd BufRead,BufNewFile *.jsm set filetype=javascript
-autocmd BufRead,BufNewFile *.md setlocal filetype=markdown
-
-autocmd Filetype java setlocal omnifunc=javacomplete#Complete
-autocmd Filetype lisp setlocal nolisp
-autocmd Filetype python setlocal noexpandtab tabstop=4
-autocmd FileType c setlocal commentstring=//%s
+augroup filetype
+	autocmd!
+	autocmd BufRead,BufNewFile *.jsm set filetype=javascript
+	autocmd BufRead,BufNewFile *.md setlocal filetype=markdown
+	
+	autocmd Filetype java setlocal omnifunc=javacomplete#Complete
+	autocmd Filetype lisp setlocal nolisp
+	autocmd Filetype python setlocal noexpandtab tabstop=4
+	autocmd FileType c setlocal commentstring=//%s
+augroup END
 
 nnoremap ; :
 nnoremap <Leader>w :w<CR>
