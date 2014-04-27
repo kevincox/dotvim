@@ -72,6 +72,9 @@ inoremap <expr><Right>   neocomplete#close_popup() . "\<Right>"
 inoremap <expr><Up>      neocomplete#close_popup() . "\<Up>"
 inoremap <expr><Down>    neocomplete#close_popup() . "\<Down>"
 
+let g:ctrlp_max_files=0
+let g:ctrlp_max_depth=999
+
 map  <F1> :NERDTreeToggle<CR>
 map! <F1> :NERDTreeToggle<CR>
 let NERDTreeShowHidden = 1
