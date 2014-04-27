@@ -76,14 +76,14 @@ map  <F1> :NERDTreeToggle<CR>
 map! <F1> :NERDTreeToggle<CR>
 let NERDTreeShowHidden = 1
 let NERDTreeIgnore = [
-\	'\.aux',
-\	'\.class',
-\	'\.git',
-\	'\.log',
-\	'\.o',
-\	'\.out',
-\	'\.pyc',
-\	'__pycache__',
+\	'\.aux$',
+\	'\.class$',
+\	'^\.git$',
+\	'\.log$',
+\	'\.o$',
+\	'\.out$',
+\	'\.pyc$',
+\	'^__pycache__$',
 \]
 
 set cpoptions+=I
@@ -94,18 +94,24 @@ nnoremap O Od<BS>
 augroup filetype
 	autocmd!
 	autocmd BufRead,BufNewFile *.jsm set filetype=javascript
-	autocmd BufRead,BufNewFile *.md setlocal filetype=markdown
+	autocmd BufRead,BufNewFile *.md  set local filetype=markdown
 	
-	autocmd Filetype java setlocal omnifunc=javacomplete#Complete
-	autocmd Filetype lisp setlocal nolisp
+	autocmd Filetype java   setlocal omnifunc=javacomplete#Complete
+	autocmd Filetype lisp   setlocal nolisp
 	autocmd Filetype python setlocal noexpandtab tabstop=4
-	autocmd FileType c setlocal commentstring=//%s
+	autocmd FileType c      setlocal commentstring=//%s
 augroup END
+
+nnoremap H 0
+onoremap H 0
+nnoremap L $
+onoremap L $
 
 nnoremap <Leader>w  :w<CR>
 nnoremap <Leader>wq :wq<CR>
 nnoremap <Leader>ev :edit   $MYVIMRC<Cr>
 nnoremap <Leader>rv :source $MYVIMRC<Cr>
+nnoremap <Leader>s  :%s/\V\<<C-r><C-w>\>/
 
 let g:Tex_DefaultTargetFormat = 'pdf'
 
