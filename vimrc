@@ -7,7 +7,7 @@ set display=lastline " Display as much of wrapped lines as possible.
 set clipboard=unnamedplus " Use system clipboard.
 set history=1000
 set scrolloff=2
-set updatetime=10000
+set updatetime=120000
 
 " No swap files.
 set nobackup nowritebackup noswapfile
@@ -89,6 +89,27 @@ let NERDTreeIgnore = [
 \	'^__pycache__$',
 \]
 
+vmap <Leader>a         <Plug>(EasyAlign)
+vmap <Leader><Leader>a <Plug>(LiveEasyAlign)
+nmap <Leader>a         <Plug>(EasyAlign)
+nmap <Leader><Leader>a <Plug>(LiveEasyAlign)
+
+let g:easy_align_delimiters = {
+\	'n': {'pattern': '\<\d\+\>',
+\		'delimeter_align': 'r',
+\	},
+\	'd': {'pattern': '\<\d\>'},
+\	'\': {'pattern': '\\'},
+\	
+\	'/': {'pattern': '//\+\|/\*\|\*/',
+\		'ignore_groups': ['String'],
+\	},
+\	'#': {'pattern': '#\+',
+\		'delimiter_align': 'l',
+\		'ignore_groups': ['String'],
+\	},
+\}
+
 set cpoptions+=I
 inoremap <CR> <CR>d<BS>
 nnoremap o od<BS>
@@ -96,17 +117,18 @@ nnoremap O Od<BS>
 
 augroup filetype
 	autocmd!
-	autocmd BufRead,BufNewFile *.jsm set filetype=javascript
-	autocmd BufRead,BufNewFile *.md  set local filetype=markdown
+	autocmd BufRead,BufNewFile *.jsm setlocal filetype=javascript
+	autocmd BufRead,BufNewFile *.md  setlocal filetype=markdown
 	
-	autocmd Filetype java   setlocal omnifunc=javacomplete#Complete
-	autocmd Filetype lisp   setlocal nolisp
-	autocmd Filetype python setlocal noexpandtab tabstop=4
-	autocmd FileType c      setlocal commentstring=//%s
+	autocmd Filetype java       setlocal omnifunc=javacomplete#Complete
+	autocmd Filetype lisp       setlocal nolisp
+	autocmd Filetype python,rst setlocal noexpandtab tabstop=4
+	autocmd FileType c          setlocal commentstring=//%s
+	autocmd FileType xml        setlocal tabstop=2 shiftwidth=2 softtabstop=2
 augroup END
 
-nnoremap H 0
-onoremap H 0
+nnoremap H ^
+onoremap H ^
 nnoremap L $
 onoremap L $
 
@@ -115,6 +137,7 @@ nnoremap <Leader>wq :wq<CR>
 nnoremap <Leader>ev :edit   $MYVIMRC<Cr>
 nnoremap <Leader>rv :source $MYVIMRC<Cr>
 nnoremap <Leader>s  :%s/\V\<<C-r><C-w>\>/
+nnoremap <Leader>y  :let @+ = expand("%:p")<Cr>
 
 let g:Tex_DefaultTargetFormat = 'pdf'
 
