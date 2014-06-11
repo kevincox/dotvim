@@ -1,4 +1,30 @@
-execute pathogen#infect()
+""""" VUNDLE
+set nocompatible " be iMproved, required
+filetype off     " required
+set shell=/bin/bash
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin('~/.vim/vundle_bundles/')
+
+Plugin 'gmarik/Vundle.vim', {'name': '../bundle/Vundle.vim'}
+
+Plugin 'junegunn/vim-easy-align'
+Plugin 'kien/ctrlp.vim'
+Plugin 'michaeljsmith/vim-indent-object'
+Plugin 'scrooloose/nerdtree'
+Plugin 'Shougo/neocomplete'
+Plugin 'sjl/gundo.vim'
+Plugin 'tomtom/tcomment_vim'
+Plugin 'tpope/vim-abolish'
+Plugin 'tpope/vim-eunuch'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-unimpaired'
+
+call vundle#end()
+
+" execute pathogen#infect()
 let mapleader = ";"
 
 set hidden
@@ -65,12 +91,12 @@ let g:neocomplete#enable_smart_case = 1
 
 let g:neocomplete#sources#syntax#min_keyword_length = 2
 
-inoremap <expr><C-Space> neocomplete#start_manual_complete()
-inoremap <expr><Nul>     neocomplete#start_manual_complete()
-inoremap <expr><Left>    neocomplete#close_popup() . "\<Left>"
-inoremap <expr><Right>   neocomplete#close_popup() . "\<Right>"
-inoremap <expr><Up>      neocomplete#close_popup() . "\<Up>"
-inoremap <expr><Down>    neocomplete#close_popup() . "\<Down>"
+inoremap <expr> <C-Space> neocomplete#start_manual_complete()
+inoremap <expr> <Nul>     neocomplete#start_manual_complete()
+inoremap <expr> <Left>    neocomplete#close_popup() . "\<Left>"
+inoremap <expr> <Right>   neocomplete#close_popup() . "\<Right>"
+inoremap <expr> <Up>      neocomplete#close_popup() . "\<Up>"
+inoremap <expr> <Down>    neocomplete#close_popup() . "\<Down>"
 
 let g:ctrlp_max_files=0
 let g:ctrlp_max_depth=999
@@ -108,6 +134,10 @@ let g:easy_align_delimiters = {
 \		'delimiter_align': 'l',
 \		'ignore_groups': ['String'],
 \	},
+\	'}': {'pattern': '}',
+\		'left_margin':  0,
+\		'right_margin': 0,
+\	},
 \}
 
 set cpoptions+=I
@@ -115,29 +145,47 @@ inoremap <CR> <CR>d<BS>
 nnoremap o od<BS>
 nnoremap O Od<BS>
 
+" Add closing brace.
+inoremap {<Cr> {<Cr>}<Esc>O
+
+function! SetTabs(w)
+	let &l:tabstop     = a:w
+	let &l:shiftwidth  = a:w
+	let &l:softtabstop = a:w
+endfunction
+
 augroup filetype
 	autocmd!
 	autocmd BufRead,BufNewFile *.jsm setlocal filetype=javascript
 	autocmd BufRead,BufNewFile *.md  setlocal filetype=markdown
 	
-	autocmd Filetype java       setlocal omnifunc=javacomplete#Complete
-	autocmd Filetype lisp       setlocal nolisp
-	autocmd Filetype python,rst setlocal noexpandtab tabstop=4
 	autocmd FileType c          setlocal commentstring=//%s
-	autocmd FileType xml        setlocal tabstop=2 shiftwidth=2 softtabstop=2
+	autocmd FileType haml       call SetTabs(2)
+	autocmd FileType java       setlocal omnifunc=javacomplete#Complete
+	autocmd FileType lisp       setlocal nolisp
+	autocmd FileType markdown   setlocal tw=80
+	autocmd FileType python,rst call SetTabs(4)
+	autocmd FileType python,rst setlocal noexpandtab
+	autocmd FileType yaml       call SetTabs(2)
+	autocmd FileType yaml       setlocal noexpandtab
+	autocmd FileType xml        call SetTabs(2)
 augroup END
 
-nnoremap H ^
-onoremap H ^
-nnoremap L $
-onoremap L $
+noremap H ^
+noremap H ^
+noremap L $
+noremap L $
+
+noremap , @q
 
 nnoremap <Leader>w  :w<CR>
 nnoremap <Leader>wq :wq<CR>
 nnoremap <Leader>ev :edit   $MYVIMRC<Cr>
 nnoremap <Leader>rv :source $MYVIMRC<Cr>
-nnoremap <Leader>s  :%s/\V\<<C-r><C-w>\>/
+nnoremap <Leader>s  :%s/\V\<<C-r><C-w>\>/<C-r><C-w>
 nnoremap <Leader>y  :let @+ = expand("%:p")<Cr>
+nnoremap <Leader>t  :s/\v\s+$//<Cr>
+nnoremap <Leader>c  :%s/\v\S\zs\s+$//
 
 let g:Tex_DefaultTargetFormat = 'pdf'
 
