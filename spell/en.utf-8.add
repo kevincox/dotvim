@@ -155,3 +155,10 @@ tcp
 modelines
 wireshark
 noexpandtab
+Namespace
+namespace
+tweakable
+css
+laggy
+foo
+const

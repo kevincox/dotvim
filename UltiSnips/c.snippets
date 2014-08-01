@@ -1,0 +1,32 @@
+snippet hf
+{ &hf_$1, {
+	"${2:${1/.*_([^_]+)/\u$1/}}", "ceph.${3:${1/_/./g}}",
+	FT_UINT${4:32}, BASE_${5:DEC}, NULL, 0,
+	${6:NULL}, HFILL
+} },
+endsnippet
+
+snippet paa
+proto_tree_add_item(tree, hf_$1,
+                    tvb, off, ${2:4}, ENC_LITTLE_ENDIAN);
+off += $2;
+$0
+endsnippet
+snippet paam
+proto_tree_add_item(tree, hf_msg_$1,
+                    tvb, off, ${2:4}, ENC_LITTLE_ENDIAN);
+off += $2;
+$0
+endsnippet
+snippet paas
+proto_tree_add_item(subtree, hf_$1,
+                    tvb, off, ${2:4}, ENC_LITTLE_ENDIAN);
+off += $2;
+$0
+endsnippet
+snippet paams
+proto_tree_add_item(subtree, hf_msg_$1,
+                    tvb, off, ${2:4}, ENC_LITTLE_ENDIAN);
+off += $2;
+$0
+endsnippet
