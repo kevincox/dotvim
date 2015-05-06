@@ -4,12 +4,13 @@ filetype off     " required
 " set shell=/bin/bash
 
 set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin('~/.vim/vundle_bundles/')
+call vundle#begin()
 
-Plugin 'gmarik/Vundle.vim', {'name': '../bundle/Vundle.vim'}
+Plugin 'gmarik/Vundle.vim'
 
 " Plugin 'davidhalter/jedi-vim'
 Plugin 'junegunn/vim-easy-align'
+Plugin 'Raimondi/delimitMate'
 Plugin 'Rip-Rip/clang_complete'
 " Plugin 'git@github.com:kevincox/clang_complete.git'
 Plugin 'kien/ctrlp.vim'
@@ -27,8 +28,16 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-unimpaired'
+Plugin 'wlangstroth/vim-racket'
 
 call vundle#end()
+
+let s:uname = system('uname -s')
+if s:uname == "Darwin\n"
+	let s:os = 'mac'
+else
+	let s:os = 'linux'
+endif
 
 " execute pathogen#infect()
 let mapleader = ";"
@@ -36,6 +45,11 @@ let mapleader = ";"
 set hidden
 set number
 set display=lastline " Display as much of wrapped lines as possible.
+if s:os == 'mac'
+	set clipboard=unnamed " Use system clipboard.
+else
+	set clipboard=unnamedplus " Use system clipboard.
+endif
 set clipboard=unnamedplus " Use system clipboard.
 set history=1000
 set scrolloff=2
@@ -69,15 +83,23 @@ augroup END
 
 set go-=T "Disable toolbar.
 
-set guifont=Deja\ Vu\ Sans\ Mono\ 11
 set t_Co=256
 syntax on
-if has('gui_running')
-	colorscheme Mustang
+if has('gui_macvim')
+	colorscheme kevincox_tomorrow
+	highlight ColorColumn guibg=#EEEEEE ctermbg=235
+elseif has('gui_running')
+	colorscheme kevincox_mustang
+	highlight ColorColumn guibg=#2D2D2D ctermbg=235
 else
-	colorscheme Mustang
+	colorscheme kevincox_mustang
+	highlight ColorColumn guibg=#2D2D2D ctermbg=235
 end
-highlight ColorColumn guibg=#2d2d2d ctermbg=235
+if s:os == 'linux'
+	set guifont=Deja\ Vu\ Sans\ Mono\ 11
+elseif s:os == 'mac'
+	set guifont=Monaco:h12
+endif
 
 filetype on
 filetype plugin on
@@ -88,7 +110,6 @@ set autoindent copyindent preserveindent
 set tabstop=4 shiftwidth=4 softtabstop=0
 
 set omnifunc=syntaxcomplete#Complete
-autocmd Filetype java setlocal omnifunc=javacomplete#Complete
 
 let g:clang_make_default_keymappings = 0
 let g:clang_complete_copen = 1
@@ -96,6 +117,7 @@ let g:clang_periodic_quickfix = 0
 let g:clang_snippets = 0
 let g:clang_snippets_engine = 'ultisnips'
 let g:clang_complete_macros = 1
+let g:clang_user_options = '-std=c++11'
 
 let g:jedi#auto_vim_configuration = 0 " Fuck off.
 let g:jedi#use_tabs_not_buffers = 1
@@ -116,7 +138,7 @@ let g:neocomplete#enable_smart_case = 1
 
 let g:neocomplete#sources#syntax#min_keyword_length = 2
 
-inoremap <expr> <C-Space> &omnifunc? '<C-x><C-o>' : '<C-x><C-u>'
+inoremap <expr> <C-Space> strlen(&omnifunc)? '<C-x><C-o>' : '<C-x><C-u>'
 " inoremap <expr> <C-n> pumvisible()? '<C-n>' : '<C-x><C-u><C-p>'
 " inoremap <expr> <C-p> pumvisible()? '<C-p>' : '<C-x><C-u><C-p>'
 
@@ -136,8 +158,8 @@ let g:ctrlp_max_files=0
 let g:ctrlp_max_depth=999
 nnoremap // :exec 'CtrlPLine '.buffer_name('%')<CR>
 
-map  <F1> :NERDTreeToggle<CR>
-map! <F1> :NERDTreeToggle<CR>
+nnoremap <F1> :NERDTreeToggle<CR>
+inoremap <F1> <Esc>:NERDTreeToggle<CR>
 map  <Leader>t :NERDTreeToggle<CR>
 let NERDTreeShowHidden = 1
 let NERDTreeIgnore = [
@@ -180,23 +202,35 @@ let g:UltiSnipsExpandTrigger       = '<C-j>'
 let g:UltiSnipsJumpForwardTrigger  = '<C-j>'
 let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
 
+let g:delimitMate_expand_cr    = 1
+let g:delimitMate_expand_space = 1
+
 set cpoptions+=I
-inoremap <CR> <CR>?<BS>
+imap <SID><CR> <Plug>delimitMateCR
+inoremap <script> <CR> <SID><CR>?<BS>
 nnoremap o od<BS>
 nnoremap O Od<BS>
 
 " Add closing brace.
-inoremap {<Cr> {<Cr>}<Esc>O
+" inoremap {<Cr> {<Cr>}<Esc>O
 
 " Exec cmd in a function.  This saves the search register and other things.
 function! Exec(cmd)
 	execute a:cmd
 endfunction
 
-function! SetTabs(w)
-	let &l:tabstop     = a:w
-	let &l:shiftwidth  = a:w
-	let &l:softtabstop = a:w
+command! -nargs=? Tab call SetTabs(<args>)
+
+function! SetTabs(...)
+	if a:0
+		let w = a:1
+	else
+		let w = 4
+	end
+	
+	let &l:tabstop     = w
+	let &l:shiftwidth  = w
+	let &l:softtabstop = w
 endfunction
 
 " Super-simple indent calculation.
@@ -273,20 +307,26 @@ augroup filetype
 	autocmd!
 	autocmd BufRead,BufNewFile *.jsm setlocal filetype=javascript
 	autocmd BufRead,BufNewFile *.md  setlocal filetype=markdown
+	autocmd BufRead,BufNewFile *.tc  setlocal filetype=javascript
 	
-	autocmd FileType c          setlocal commentstring=//%s
-	autocmd FileType c,cpp      call OmniLeaders(['.', '->', '::'])
-	autocmd FileType c,cpp      nnoremap <C-]> :call ClangGotoDeclaration()<CR>
-	autocmd FileType haml       call SetTabs(2)
+	autocmd FileType c           setlocal commentstring=//%s
+	autocmd FileType c,cpp       call OmniLeaders(['.', '->', '::'])
+	autocmd FileType c,cpp       nnoremap <C-]> :call ClangGotoDeclaration()<CR>
+	autocmd FileType haml        Tab 2
 	autocmd FileType java       setlocal omnifunc=javacomplete#Complete
-	autocmd FileType lisp       setlocal nolisp
-	autocmd FileType markdown   call SetWrap(1)
-	autocmd FileType python,rst call SetTabs(4)
-	autocmd FileType python,rst setlocal noexpandtab
-	autocmd FileType text       call SetWrap(1)
-	autocmd FileType yaml       call SetTabs(2)
-	autocmd FileType yaml       setlocal noexpandtab
-	autocmd FileType xml        call SetTabs(2)
+	" autocmd fileType java       call OmniLeaders(['.'])
+	autocmd FileType lisp,scheme setlocal nolisp
+	autocmd FileType lisp,scheme Tab 2
+	autocmd FileType markdown    call SetWrap(1)
+	autocmd FileType php         call OmniLeaders(['->', '::'])
+	autocmd FileType python,rst  Tab 4
+	autocmd FileType python,rst  setlocal noexpandtab
+	autocmd FileType tex         Tab 2
+	autocmd FileType tex         call SetWrap(1)
+	autocmd FileType text        call SetWrap(1)
+	autocmd FileType yaml        Tab 2
+	autocmd FileType yaml        setlocal noexpandtab
+	autocmd FileType xml         Tab 2
 augroup END
 
 noremap H ^

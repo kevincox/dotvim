@@ -1,0 +1,26 @@
+snippet class
+function $1($2) {
+	$0
+}
+Object.defineProperties($1, {
+});
+Object.preventExtensions($1);
+Object.defineProperties($1.prototype, {
+});
+Object.preventExtensions($1.prototype);
+endsnippet
+
+snippet extend
+function $2($3) {
+	$1.apply(this, arguments);
+	
+	$0
+}
+Object.defineProperties($2, {
+});
+Object.preventExtensions($2);
+$2.prototype = Object.create($1.prototype, {
+	constructor: {value: $2},
+});
+Object.preventExtensions($2.prototype);
+endsnippet
