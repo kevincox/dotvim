@@ -1,23 +1,24 @@
 """"" VUNDLE
 set nocompatible " be iMproved, required
 filetype off     " required
-" set shell=/bin/bash
+set shell=/bin/bash
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 
-" Plugin 'davidhalter/jedi-vim'
+Plugin 'Arkham/vim-quickfixdo'
+Plugin 'derekwyatt/vim-scala'
 Plugin 'junegunn/vim-easy-align'
-Plugin 'Raimondi/delimitMate'
-Plugin 'Rip-Rip/clang_complete'
-" Plugin 'git@github.com:kevincox/clang_complete.git'
 Plugin 'kien/ctrlp.vim'
+Plugin 'LnL7/vim-nix'
 Plugin 'marijnh/tern_for_vim'
 Plugin 'michaeljsmith/vim-indent-object'
+Plugin 'racer-rust/vim-racer'
+Plugin 'Raimondi/delimitMate'
+Plugin 'rust-lang/rust.vim'
 Plugin 'scrooloose/nerdtree'
-" Plugin 'Shougo/neocomplete'
 Plugin 'SirVer/ultisnips'
 Plugin 'sjl/gundo.vim'
 Plugin 'tommcdo/vim-exchange'
@@ -28,6 +29,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-unimpaired'
+Plugin 'Valloric/YouCompleteMe'
 Plugin 'wlangstroth/vim-racket'
 
 call vundle#end()
@@ -45,15 +47,15 @@ let mapleader = ";"
 set hidden
 set number
 set display=lastline " Display as much of wrapped lines as possible.
+set history=1000
+set scrolloff=2
+set updatetime=60000
+
 if s:os == 'mac'
 	set clipboard=unnamed " Use system clipboard.
 else
 	set clipboard=unnamedplus " Use system clipboard.
 endif
-set clipboard=unnamedplus " Use system clipboard.
-set history=1000
-set scrolloff=2
-set updatetime=60000
 
 " No swap files.
 set nobackup nowritebackup noswapfile
@@ -69,7 +71,18 @@ set whichwrap=b,s,<,>,[,]
 set ffs=unix,dos,mac
 set encoding=utf-8
 set spell spelllang=en_us
-set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+
+set wildignore+=.git
+set wildignore+=.hg
+set wildignore+=.svn
+set wildignore+=__pycache__
+
+set wildignore+=*.aux
+set wildignore+=*.class
+set wildignore+=*.o
+set wildignore+=*.out
+set wildignore+=*.pyc
+set wildignore+=*.pyo
 
 set hlsearch incsearch
 set ignorecase smartcase infercase
@@ -81,7 +94,8 @@ augroup searchhighlight
 	autocmd CursorHold,CursorHoldI * call SearchHlClear()
 augroup END
 
-set go-=T "Disable toolbar.
+set go-=T " Disable toolbar.
+set go-=m " Disable menubar.
 
 set t_Co=256
 syntax on
@@ -109,7 +123,7 @@ set autoindent copyindent preserveindent
 "set smarttab
 set tabstop=4 shiftwidth=4 softtabstop=0
 
-set omnifunc=syntaxcomplete#Complete
+" set omnifunc=syntaxcomplete#Complete
 
 let g:clang_make_default_keymappings = 0
 let g:clang_complete_copen = 1
@@ -128,30 +142,16 @@ let g:tern_show_argument_hints = 'on_move'
 let g:tern_show_signature_in_pum = 1
 let g:tern_request_timeout = 10
 
-let g:ycm_filetype_whitelist = {'javascript':1,'python':1}
+" let g:ycm_filetype_whitelist = {'javascript':1,'python':1}
 let g:ycm_filetype_blacklist = {}
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_allow_changing_updatetime = 0
 
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
+nnoremap <Left>  <C-w><Left>
+nnoremap <Right> <C-w><Right>
+nnoremap <Up>    <C-w><Up>
+nnoremap <Down>  <C-w><Down>
 
-let g:neocomplete#sources#syntax#min_keyword_length = 2
-
-inoremap <expr> <C-Space> strlen(&omnifunc)? '<C-x><C-o>' : '<C-x><C-u>'
-" inoremap <expr> <C-n> pumvisible()? '<C-n>' : '<C-x><C-u><C-p>'
-" inoremap <expr> <C-p> pumvisible()? '<C-p>' : '<C-x><C-u><C-p>'
-
-" inoremap <Left>  <C-y><Left>
-" inoremap <Right> <C-y><Right>
-" inoremap <Up>    <C-y><Up>
-" inoremap <Down>  <C-y><Down>
-
-" inoremap <expr> <Left>  pumvisible()? '<C-y><Left>'  : '<Left>'
-" inoremap <expr> <Right> pumvisible()? '<C-y><Right>' : '<Right>'
-" inoremap <expr> <Up>    pumvisible()? '<C-y><Up>'    : '<Up>'
-" inoremap <expr> <Down>  pumvisible()? '<C-y><Down>'  : '<Down>'
-"
 let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:999'
 let g:ctrlp_show_hidden = 0
 let g:ctrlp_max_files=0
@@ -162,16 +162,7 @@ nnoremap <F1> :NERDTreeToggle<CR>
 inoremap <F1> <Esc>:NERDTreeToggle<CR>
 map  <Leader>t :NERDTreeToggle<CR>
 let NERDTreeShowHidden = 1
-let NERDTreeIgnore = [
-\	'\.aux$',
-\	'\.class$',
-\	'^\.git$',
-\	'\.log$',
-\	'\.o$',
-\	'\.out$',
-\	'\.pyc$',
-\	'^__pycache__$',
-\]
+let NERDTreeRespectWildIgnore = 1
 
 vmap <Leader>a         <Plug>(EasyAlign)
 vmap <Leader><Leader>a <Plug>(LiveEasyAlign)
@@ -202,7 +193,7 @@ let g:UltiSnipsExpandTrigger       = '<C-j>'
 let g:UltiSnipsJumpForwardTrigger  = '<C-j>'
 let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
 
-let g:delimitMate_expand_cr    = 1
+" let g:delimitMate_expand_cr    = 1
 let g:delimitMate_expand_space = 1
 
 set cpoptions+=I
@@ -313,14 +304,18 @@ augroup filetype
 	autocmd FileType c,cpp       call OmniLeaders(['.', '->', '::'])
 	autocmd FileType c,cpp       nnoremap <C-]> :call ClangGotoDeclaration()<CR>
 	autocmd FileType haml        Tab 2
-	autocmd FileType java       setlocal omnifunc=javacomplete#Complete
+	autocmd FileType java        setlocal omnifunc=javacomplete#Complete
 	" autocmd fileType java       call OmniLeaders(['.'])
 	autocmd FileType lisp,scheme setlocal nolisp
 	autocmd FileType lisp,scheme Tab 2
 	autocmd FileType markdown    call SetWrap(1)
+	autocmd FileType nix         Tab 2
+	autocmd FileType nix         setlocal noexpandtab
 	autocmd FileType php         call OmniLeaders(['->', '::'])
 	autocmd FileType python,rst  Tab 4
-	autocmd FileType python,rst  setlocal noexpandtab
+	" autocmd FileType python,rst  setlocal noexpandtab
+	autocmd FileType rust        Tab 4
+	autocmd FileType rust        setlocal noexpandtab
 	autocmd FileType tex         Tab 2
 	autocmd FileType tex         call SetWrap(1)
 	autocmd FileType text        call SetWrap(1)
@@ -336,14 +331,16 @@ noremap L $
 
 noremap , @q
 
+" Select last paste
+nnoremap gp `[v`]
+
 nnoremap <Leader>w  :w<CR>
-nnoremap <Leader>wq :wq<CR>
 nnoremap <Leader>ev :edit   $MYVIMRC<Cr>
 nnoremap <Leader>rv :source $MYVIMRC<Cr>
 nnoremap <Leader>s  :%s/\V\<<C-r><C-w>\>/<C-r><C-w>
 nnoremap <Leader>y  :let @+ = expand("%:p")<Cr>
-noremap  <Leader>t  :s/\v\s+$//<Cr>
-nnoremap <Leader>c  :%s/\v\S\zs\s+$//
+nnoremap <Leader>t  :%s/\v\s+$//<Cr>
+nnoremap <Leader>c  :%s/\v\S\zs\s+$//<Cr>
 
 let g:Tex_DefaultTargetFormat = 'pdf'
 
